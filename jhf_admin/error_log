@@ -1,0 +1,10 @@
+[21-Nov-2024 09:29:03 UTC] PHP Fatal error:  Cannot redeclare Home::index() in /home/mynefcwe/public_html/application/controllers/Home.php on line 34
+[21-Nov-2024 09:30:59 UTC] PHP Fatal error:  Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in /home/mynefcwe/public_html/application/views/register.php on line 16
+[02-Jan-2025 11:18:04 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function php_info() in /home/jhomefurnishings/public_html/newweb/jhf_admin/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/jhomefurnishings/public_html/newweb/jhf_admin/index.php on line 1
+[02-Jan-2025 11:18:23 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function php_info() in /home/jhomefurnishings/public_html/newweb/jhf_admin/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/jhomefurnishings/public_html/newweb/jhf_admin/index.php on line 1
