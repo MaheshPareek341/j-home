@@ -34,27 +34,29 @@
                            </div>
                            <div class="col-12 col-lg-6">
                               <h3 class="contact-us__header decor-header">Leave us a Message</h3>
-                              <form>
+
+                           <form action="/controllers/ContactController/submit" method="post" enctype="multipart/form-data">
                                  <div class="mb-3 row g-3">
-                                    <div class="col-md-6"><label for="form-name"
-                                       class="form-label">Your Name</label> <input
-                                       type="text" id="form-name" class="form-control"
-                                       placeholder="Your Name"></div>
-                                    <div class="col-md-6"><label for="form-email"
-                                       class="form-label">Email</label> <input type="email"
-                                       id="form-email" class="form-control"
-                                       placeholder="Email Address"></div>
+                                    <div class="col-md-6">
+                                       <label for="form-name" class="form-label">Your Name</label>
+                                       <input type="text" id="form-name" class="form-control" placeholder="Your Name" name="name">
+                                    </div>
+                                    <div class="col-md-6">
+                                       <label for="form-email" class="form-label">Email</label>
+                                       <input type="email" id="form-email" class="form-control" placeholder="Email Address" name="email">
+                                    </div>
                                  </div>
-                                 <div class="mb-3"><label for="form-subject"
-                                    class="form-label">Subject</label> <input type="text"
-                                    id="form-subject" class="form-control"
-                                    placeholder="Subject"></div>
-                                 <div class="mb-3"><label for="form-message"
-                                    class="form-label">Message</label> <textarea
-                                    id="form-message" class="form-control"
-                                    rows="4"></textarea></div>
-                                 <div class="mt-4"><button type="submit"
-                                    class="btn btn-primary">Send Message</button></div>
+                                 <div class="mb-3">
+                                    <label for="form-subject" class="form-label">Subject</label>
+                                    <input type="text" id="form-subject" class="form-control" placeholder="Subject" name="subject">
+                                 </div>
+                                 <div class="mb-3">
+                                    <label for="form-message" class="form-label">Message</label>
+                                    <textarea id="form-message" class="form-control" rows="4" name="message"></textarea>
+                                 </div>
+                                 <div class="mt-4">
+                                    <button type="submit" class="btn btn-primary">Send Message</button>
+                                 </div>
                               </form>
                            </div>
                         </div>
@@ -70,4 +72,6 @@
    <!-- page / end -->
 </div>
 <!-- site__body / end --><!-- site__footer -->
+
+
 <?php include_once "footer.php" ?>

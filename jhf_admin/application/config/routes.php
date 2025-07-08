@@ -99,7 +99,12 @@ $route['products/update/(:num)']               = 'products/update_products/$1';
 $route['products/delete/(:num)']               = 'products/delete_products/$1';
 
 
-
+$route['contact-us']                              = 'contact/index';
+$route['contact-us/add']                         = 'contact/store';
+$route['contact-us/save']                        = 'contact/save_contact';
+$route['contact-us/edit/(:num)']                 = 'contact/edit_contact/$1';
+$route['contact-us/update/(:num)']               = 'contact/update_contact/$1';
+$route['contact-us/delete/(:num)']               = 'contact/delete_contact/$1';
 
 
 

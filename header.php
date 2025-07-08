@@ -23,6 +23,28 @@
    
 </head>
 
+<?php
+$requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+// Load route definitions
+// require_once __DIR__ . '/routes/web.php';
+require_once __DIR__ . '/controllers/ContactController.php';
+
+if (isset($routes[$requestUri])) {
+    list($controllerName, $methodName) = $routes[$requestUri];
+
+    $controller = new $controllerName();
+    if (method_exists($controller, $methodName)) {
+        $controller->$methodName();
+    } else {
+        echo "Method not found!";
+    }
+} else {
+    http_response_code(404);
+    echo "404 - Page Not Found";
+}
+?>
+
 <body>
     <!-- mobilemenu -->
     <div class="mobilemenu" id="mobilemenu">

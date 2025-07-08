@@ -60,11 +60,11 @@
                                                  <td><?=$cat->material?></td>
                                                  <td><?=$cat->finish?></td>
                                                 <td>
-                                                   <a href="<?= base_url('sub_category/edit/' . $cat->id) ?>" > <i class="fa fa-edit" style="font-size:22px; cursor: pointer;"></i> </a>
+                                                   <a href="<?= base_url('products/edit/' . $cat->id) ?>" > <i class="fa fa-edit" style="font-size:22px; cursor: pointer;"></i> </a>
                                                     <sapn style="padding-left:20px;"></sapn> 
-                                                    <a href="<?= base_url('sub_category/delete/' . $cat->id) ?>" 
+                                                    <a href="<?= base_url('products/delete_products/' . $cat->id) ?>" 
                                                        class="btn btn-danger" 
-                                                       onclick="return confirm('Are you sure you want to delete this sub category?')">
+                                                       onclick="return confirm('Are you sure you want to delete this product?')">
                                                     <i class="fa fa-trash" style="font-size:22px"></i></a>
                                                     
                                                 </td>

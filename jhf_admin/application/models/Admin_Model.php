@@ -119,11 +119,7 @@
         public function getAllProducts(){
             return $this->db->select("*")->get('product')->result();
         }
-        
-        // public function add_products($data) {
-        //     return $this->db->insert('product', $data);
-        // }
-        
+
         public function add_products($product_data, $images) {
             // Start a transaction for data consistency
             $this->db->trans_start();
@@ -150,14 +146,160 @@
             return $this->db->trans_status();
         }
 
-        public function update_products($id, $data) {
+        // public function update_products($id, $data) {
+        //     $this->db->where('id', $id);
+        //     return $this->db->update('product', $data);
+        // }
+
+        public function get_product_images($product_id) {
+            $this->db->where('product_id', $product_id);
+            $query = $this->db->get('product_images');
+            return $query->result();
+        }
+
+        // Update product and images
+        // public function update_products($id, $product_data, $removed_images, $new_images) {
+        //     // Start a transaction
+        //     $this->db->trans_start();
+
+        //     // Update product data
+        //     $this->db->where('id', $id);
+        //     $this->db->update('product', $product_data);
+
+        //     // Delete removed images
+        //     if (!empty($removed_images)) {
+        //         $this->db->where('product_id', $id);
+        //         $this->db->where_in('image', $removed_images);
+        //         $this->db->delete('product_images');
+
+        //         // Delete image files from server
+        //         foreach ($removed_images as $image) {
+        //             $file_path = FCPATH . 'uploads/products/' . $image;
+        //             if (file_exists($file_path)) {
+        //                 unlink($file_path);
+        //             }
+        //         }
+        //     }
+
+        //     // Insert new images
+        //     if (!empty($new_images)) {
+        //         foreach ($new_images as $image) {
+        //             $image_data = [
+        //                 'product_id' => $id,
+        //                 'image' => $image
+        //             ];
+        //             $this->db->insert('product_images', $image_data);
+        //         }
+        //     }
+
+        //     // Complete the transaction
+        //     $this->db->trans_complete();
+
+        //     // Return true if transaction was successful
+        //     return $this->db->trans_status();
+        // }
+
+        public function get_product_by_id($id) {
+            // Fetch product data
+            $this->db->select('*');
+            $this->db->from('product');
             $this->db->where('id', $id);
-            return $this->db->update('product', $data);
+            $query = $this->db->get();
+
+            if ($query->num_rows() == 0) {
+                log_message('error', 'Product not found for ID: ' . $id);
+                return false;
+            }
+
+            $product = $query->row();
+
+            // Fetch associated images
+            $this->db->select('id, image');
+            $this->db->from('product_images');
+            $this->db->where('product_id', $id);
+            $images_query = $this->db->get();
+            $product_images = $images_query->result();
+
+            return [
+                'product' => $product,
+                'images' => $product_images
+            ];
+        }
+
+        public function update_products($id, $product_data, $removed_images, $new_images) {
+            // Start a transaction
+            $this->db->trans_start();
+
+            // Update product data
+            $this->db->where('id', $id);
+            if (!$this->db->update('product', $product_data)) {
+                log_message('error', 'Failed to update product ID ' . $id . ': ' . json_encode($product_data));
+                $this->db->trans_rollback();
+                return false;
+            }
+
+            // Delete removed images
+            if (!empty($removed_images)) {
+                $this->db->where('product_id', $id);
+                $this->db->where_in('image', $removed_images);
+                if (!$this->db->delete('product_images')) {
+                    log_message('error', 'Failed to delete images for product ID ' . $id . ': ' . json_encode($removed_images));
+                    $this->db->trans_rollback();
+                    return false;
+                }
+
+                // Delete image files from server
+                foreach ($removed_images as $image) {
+                    $file_path = FCPATH . 'Uploads/products/' . $image;
+                    if (file_exists($file_path)) {
+                        unlink($file_path);
+                    }
+                }
+            }
+
+            // Insert new images
+            if (!empty($new_images)) {
+                foreach ($new_images as $image) {
+                    $image_data = [
+                        'product_id' => $id,
+                        'image' => $image
+                    ];
+                    if (!$this->db->insert('product_images', $image_data)) {
+                        log_message('error', 'Failed to insert image for product ID ' . $id . ': ' . $image);
+                        $this->db->trans_rollback();
+                        return false;
+                    }
+                }
+            }
+
+            // Complete the transaction
+            $this->db->trans_complete();
+            return $this->db->trans_status();
         }
         
+        // public function get_product_images($product_id) {
+        //     $this->db->select('image');
+        //     $this->db->from('product_images');
+        //     $this->db->where('product_id', $product_id);
+        //     $query = $this->db->get();
+        //     return $query->result_array();
+        // }
+
         public function delete_products($id) {
-             $this->db->delete('product', array('id' => $id));
-             return true;
+            // Start a transaction for data consistency
+            $this->db->trans_start();
+
+            // Delete associated images from product_images table
+            $this->db->delete('product_images', array('product_id' => $id));
+
+            // Delete product from product table
+            $this->db->delete('product', array('id' => $id));
+
+            // Complete the transaction
+            $this->db->trans_complete();
+
+            // Return true if transaction was successful, false otherwise
+            return $this->db->trans_status();
         }
         
         public function get_products_by_id($id) {
@@ -247,6 +389,131 @@
         public function get_user_by_id($user_id) {
             return $this->db->get_where('users', ['user_id' => $user_id])->row_array();
         }
+
+
+
+
+
+
+        /**
+     * Add a new contact form submission
+     * @param array $data Contact data (name, email, subject, message)
+     * @return bool True on success, false on failure
+     */
+    // public function add_contact($data) {
+    //     // Start a transaction
+    //     $this->db->trans_start();
+
+    //     // Insert contact data
+    //     $this->db->insert('contact_us', $data);
+
+    //     // Check for database errors
+    //     if ($this->db->error()['code']) {
+    //         log_message('error', 'Failed to insert contact: ' . json_encode($data) . ' Error: ' . json_encode($this->db->error()));
+    //         $this->db->trans_rollback();
+    //         return false;
+    //     }
+
+    //     $contact_id = $this->db->insert_id();
+
+    //     // Complete the transaction
+    //     $this->db->trans_complete();
+
+    //     // Log success
+    //     log_message('debug', 'Contact added successfully, ID: ' . $contact_id);
+
+    //     return $this->db->trans_status();
+    // }
+
+    public function add_contact($data) {
+        try {
+            // Insert data into the contacts table
+            $data['created_at'] = date('Y-m-d H:i:s');
+            return $this->db->insert('contacts', $data);
+        } catch (Exception $e) {
+            log_message('error', 'Failed to insert contact: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get all contact form submissions
+     * @return array|bool Array of contact entries or false on error
+     */
+    public function get_all_contacts() {
+        $this->db->select('id, name, email, subject, message');
+        $this->db->from('contact_us');
+        $this->db->order_by('id', 'DESC'); // Latest first
+        $query = $this->db->get();
+
+        // Check for database errors
+        if ($this->db->error()['code']) {
+            log_message('error', 'Database error in get_all_contacts: ' . json_encode($this->db->error()));
+            return false;
+        }
+
+        return $query->result();
+    }
+
+    /**
+     * Get a single contact by ID
+     * @param int $id Contact ID
+     * @return object|bool Contact object or false if not found
+     */
+    public function get_contact_by_id($id) {
+        // Sanitize ID
+        $id = (int)$id;
+
+        $this->db->select('id, name, email, subject, message');
+        $this->db->from('contact_us');
+        $this->db->where('id', $id);
+        $query = $this->db->get();
+
+        // Check for database errors
+        if ($this->db->error()['code']) {
+            log_message('error', 'Database error in get_contact_by_id for ID ' . $id . ': ' . json_encode($this->db->error()));
+            return false;
+        }
+
+        // Check if contact exists
+        if ($query->num_rows() == 0) {
+            log_message('error', 'Contact not found for ID: ' . $id);
+            return false;
+        }
+
+        return $query->row();
+    }
+
+    /**
+     * Delete a contact by ID
+     * @param int $id Contact ID
+     * @return bool True on success, false on failure
+     */
+    public function delete_contact($id) {
+        // Sanitize ID
+        $id = (int)$id;
+
+        // Start a transaction
+        $this->db->trans_start();
+
+        $this->db->where('id', $id);
+        $this->db->delete('contact_us');
+
+        // Check for database errors
+        if ($this->db->error()['code']) {
+            log_message('error', 'Failed to delete contact ID ' . $id . ': ' . json_encode($this->db->error()));
+            $this->db->trans_rollback();
+            return false;
+        }
+
+        // Complete the transaction
+        $this->db->trans_complete();
+
+        // Log success
+        log_message('debug', 'Contact deleted successfully, ID: ' . $id);
+
+        return $this->db->trans_status();
+    }
         
     }
 ?>

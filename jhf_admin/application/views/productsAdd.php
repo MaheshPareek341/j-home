@@ -61,7 +61,7 @@
                         <div class="tab-content" id="pills-tabContent">
                             <div class="tab-pane fade active show" id="active" role="tabpanel" aria-labelledby="active-tab">
                     
-                              <form action="<?= base_url('products/save'); ?>" method="post" enctype="multipart/form-data">
+                        <form action="<?= base_url('products/save_products'); ?>" method="post" enctype="multipart/form-data">
                             <!-- Product Name -->
                             <div class="form-group mb-3">
                                 <label for="product_name">Product Name</label>
@@ -97,6 +97,16 @@
                             <div class="form-group mb-3">
                                 <label for="finish">Finish</label>
                                 <input type="text" class="form-control mt-1" id="finish" name="finish" value="" required>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="category">Category</label>
+                                <select class="form-control mt-1" id="category" name="category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="dining_room">Dining Room</option>
+                                    <option value="bedroom">Bedroom</option>
+                                    <option value="occasional">Occasional</option>
+                                </select>
                             </div>
 
                             <!-- Submit Button -->
